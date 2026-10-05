@@ -1,0 +1,192 @@
+:root {
+  --bg: #f6f7fb;
+  --card: #fff;
+  --ink: #1d2433;
+  --muted: #6b7385;
+  --line: #e3e6ee;
+  --event: #2f6fed;
+  --event-bg: #eaf1ff;
+  --state: #8a3ffc;
+  --state-bg: #f3ecff;
+  --dom: #14a06f;
+  --dom-bg: #e3f6ee;
+  --warn: #c77700;
+  --warn-bg: #fff4e0;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+code { font-family: var(--mono); font-size: .88em; }
+
+/* ---------- 헤더 ---------- */
+.top { max-width: 1180px; margin: 0 auto; padding: 32px 20px 4px; }
+.top h1 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -.02em; }
+.top p { margin: 0; color: var(--muted); }
+
+.chip { display: inline-block; padding: 1px 9px; border-radius: 999px; font-weight: 700; font-size: .9em; }
+.chip.event { background: var(--event-bg); color: var(--event); }
+.chip.state { background: var(--state-bg); color: var(--state); }
+.chip.dom   { background: var(--dom-bg);   color: var(--dom); }
+
+/* ---------- 레이아웃 ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 16px; }
+.panel-head h2 { margin: 0; font-size: 1.1rem; }
+.panel-head small, .state-box small { color: var(--muted); font-weight: 400; font-size: .78rem; margin-left: 4px; }
+
+.badge { font-size: .8rem; padding: 4px 10px; border-radius: 999px; font-weight: 600; transition: background .2s, color .2s; }
+.badge.ok    { background: var(--dom-bg);  color: var(--dom); }
+.badge.stale { background: var(--warn-bg); color: var(--warn); }
+
+/* ---------- 할 일 앱 ---------- */
+#app { border: 2px dashed var(--line); border-radius: 12px; padding: 16px; }
+
+#todo-form { display: flex; gap: 8px; }
+#todo-input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font: inherit; }
+#todo-input:focus { outline: 2px solid var(--event); border-color: transparent; }
+
+button { font: inherit; cursor: pointer; }
+#todo-form button { padding: 10px 16px; border: 0; border-radius: 10px; background: var(--ink); color: #fff; font-weight: 600; }
+
+#todo-list { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.todo { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; }
+.todo:hover { border-color: #cbd1dd; }
+.check {
+  flex: none; width: 22px; height: 22px; padding: 0;
+  display: grid; place-items: center;
+  border: 2px solid #c3c8d4; border-radius: 6px;
+  background: #fff; color: #fff; font-size: 13px; line-height: 1;
+}
+.todo.done .check { background: var(--dom); border-color: var(--dom); }
+.todo .text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.todo.done .text { text-decoration: line-through; color: var(--muted); }
+.delete { border: 0; background: none; color: #a3a9b6; font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: 6px; }
+.delete:hover { color: #e5484d; background: #fdecec; }
+
+.empty { color: var(--muted); text-align: center; margin: 14px 0 0; }
+.summary { margin: 14px 0 0; color: var(--muted); font-size: .9rem; }
+.summary strong { display: inline-block; padding: 0 5px; border-radius: 4px; color: var(--ink); }
+
+/* DOM이 바뀐 곳 깜빡임 */
+.flash { animation: flash 1.6s ease-out; }
+@keyframes flash {
+  0%, 30% { box-shadow: 0 0 0 3px var(--dom); background: var(--dom-bg); }
+  100%    { box-shadow: 0 0 0 3px transparent; }
+}
+
+/* 클릭 위치 파동 (이벤트) */
+.ripple {
+  position: fixed; z-index: 10; pointer-events: none;
+  width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+  background: var(--event);
+  animation: ripple .7s ease-out forwards;
+}
+@keyframes ripple { from { transform: scale(1); opacity: .6; } to { transform: scale(5); opacity: 0; } }
+
+/* ---------- 실험실 ---------- */
+.lab { margin-top: 20px; padding: 16px; border-radius: 12px; background: #fafbfd; border: 1px solid var(--line); }
+.lab h3 { margin: 0 0 10px; font-size: .95rem; }
+.switch { display: flex; gap: 8px; align-items: center; font-size: .9rem; cursor: pointer; }
+.switch input { width: 18px; height: 18px; accent-color: var(--dom); }
+#manual-render {
+  margin-top: 10px; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--line); background: #fff;
+  font-family: var(--mono); font-size: .85rem;
+}
+#manual-render.pulse { border-color: var(--warn); color: var(--warn); animation: pulse 1.2s infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 5px var(--warn-bg); } }
+.hint { margin: 10px 0 0; font-size: .85rem; color: var(--muted); }
+
+/* ---------- 흐름 패널 ---------- */
+.speed-note { font-size: .75rem; color: var(--muted); }
+
+.flow { list-style: none; margin: 0; padding: 0; }
+.stage {
+  border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  transition: border-color .25s, background .25s, opacity .25s, box-shadow .25s;
+}
+.stage.idle { opacity: .55; }
+#stage-event { --c: var(--event); --cbg: var(--event-bg); }
+#stage-state { --c: var(--state); --cbg: var(--state-bg); }
+#stage-dom   { --c: var(--dom);   --cbg: var(--dom-bg); }
+.stage.active { border-color: var(--c); background: var(--cbg); box-shadow: 0 0 0 4px var(--cbg); }
+.stage.done   { border-color: var(--c); }
+.stage.skipped { border-color: var(--warn); border-style: dashed; background: var(--warn-bg); }
+
+.stage-top { display: flex; align-items: center; gap: 8px; }
+.num {
+  flex: none; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: .8rem; color: #fff; background: #b9bfcc;
+  transition: background .25s;
+}
+.stage.active .num, .stage.done .num { background: var(--c); }
+.stage.skipped .num { background: var(--warn); }
+.stage h3 { margin: 0; font-size: 1rem; }
+.counter { margin-left: auto; font-size: .75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.what { margin: 2px 0 6px 32px; font-size: .8rem; color: var(--muted); }
+.detail { margin-left: 32px; font-size: .9rem; min-height: 1.4em; overflow-wrap: anywhere; }
+.detail ul { margin: 0; padding-left: 18px; }
+.detail .sub { margin-top: 4px; font-size: .8rem; color: var(--muted); }
+.detail .wait { color: var(--muted); font-size: .85rem; }
+.tag {
+  display: inline-block; padding: 0 7px; border-radius: 6px;
+  background: var(--event); color: #fff; font-family: var(--mono); font-size: .8rem;
+}
+
+.snippet {
+  display: block; margin: 8px 0 0 32px; padding: 6px 10px; border-radius: 8px;
+  background: rgba(29, 36, 51, .06); font-size: .78rem;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.snippet:empty { display: none; }
+
+.arrow { text-align: center; color: #c3c8d4; font-size: 1.1rem; line-height: 1; padding: 6px 0; transition: color .25s; }
+.arrow.lit { color: var(--ink); }
+
+/* state 패널 */
+.state-box { margin-top: 18px; }
+.state-box h3 { margin: 0 0 8px; font-size: .95rem; }
+#state-view {
+  margin: 0; padding: 12px 14px; border-radius: 10px;
+  background: #1d2433; color: #d7dce6;
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6;
+  overflow-x: auto;
+}
+#state-view .row { display: block; white-space: pre; padding: 0 4px; border-radius: 4px; }
+#state-view .hot { background: rgba(138, 63, 252, .45); }
+#state-view .gone { color: #ff8a8a; text-decoration: line-through; }
+#state-view .true { color: #5ee0a7; }
+#state-view .false { color: #ffb86b; }
+
+/* ---------- 가이드 ---------- */
+.guide { max-width: 1180px; margin: 0 auto; padding: 0 20px 48px; }
+.guide h2 { margin: 0 0 10px; font-size: 1.1rem; }
+.guide h3 { margin: 22px 0 10px; font-size: 1rem; }
+.steps { margin: 0; padding-left: 20px; }
+.steps li { margin-bottom: 6px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }

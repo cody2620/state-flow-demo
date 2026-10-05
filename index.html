@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>클릭 한 번이 화면을 바꾸기까지</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>클릭 한 번이 화면을 바꾸기까지</h1>
+    <p>
+      왼쪽 할 일 앱을 직접 조작해 보세요. 오른쪽에서
+      <span class="chip event">① 이벤트</span> →
+      <span class="chip state">② 상태 변경</span> →
+      <span class="chip dom">③ DOM 업데이트</span>
+      가 순서대로 켜집니다.
+    </p>
+  </header>
+
+  <main class="layout">
+    <!-- ===== 왼쪽: 실제 앱 ===== -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>🖥 화면 <small>사용자가 보는 DOM</small></h2>
+        <span id="sync-badge" class="badge ok">화면 = state ✓</span>
+      </div>
+
+      <div id="app">
+        <form id="todo-form">
+          <input id="todo-input" placeholder="할 일을 입력하고 Enter" autocomplete="off">
+          <button type="submit">추가</button>
+        </form>
+        <ul id="todo-list"></ul>
+        <p id="empty" class="empty">할 일이 없어요 🎉</p>
+        <p class="summary">남은 할 일 <strong id="count">0</strong>개</p>
+      </div>
+
+      <div class="lab">
+        <h3>🧪 실험실</h3>
+        <label class="switch">
+          <input type="checkbox" id="auto-render" checked>
+          <span>state가 바뀌면 자동으로 <code>render()</code> 호출</span>
+        </label>
+        <button id="manual-render" type="button">render() 직접 호출하기</button>
+        <p class="hint">
+          스위치를 끄고 할 일을 체크하거나 지워 보세요.
+          state는 바뀌는데 화면은 그대로예요.
+          화면은 <code>render()</code>가 다시 그려 줘야만 바뀝니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== 오른쪽: 흐름 시각화 ===== -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>🔍 방금 일어난 일</h2>
+        <span class="speed-note">실제로는 1ms도 안 걸려요. 눈으로 보이게 천천히 보여 주는 중</span>
+      </div>
+
+      <ol class="flow">
+        <li class="stage idle" id="stage-event">
+          <div class="stage-top"><span class="num">1</span><h3>이벤트</h3><span class="counter" id="cnt-event">0회</span></div>
+          <p class="what">사용자가 무언가를 했다 → 이벤트 리스너가 듣는다</p>
+          <div class="detail" id="detail-event"><span class="wait">왼쪽 앱에서 할 일을 추가하거나 클릭해 보세요.</span></div>
+          <code class="snippet" id="code-event"></code>
+        </li>
+        <li class="arrow" id="arrow-1">↓</li>
+        <li class="stage idle" id="stage-state">
+          <div class="stage-top"><span class="num">2</span><h3>상태 변경</h3><span class="counter" id="cnt-state">0회</span></div>
+          <p class="what">setState()로 데이터(state)를 새 값으로 바꾼다</p>
+          <div class="detail" id="detail-state"></div>
+          <code class="snippet" id="code-state"></code>
+        </li>
+        <li class="arrow" id="arrow-2">↓</li>
+        <li class="stage idle" id="stage-dom">
+          <div class="stage-top"><span class="num">3</span><h3>DOM 업데이트</h3><span class="counter" id="cnt-dom">0회</span></div>
+          <p class="what">render()가 state를 보고 화면을 다시 그린다</p>
+          <div class="detail" id="detail-dom"></div>
+          <code class="snippet" id="code-dom"></code>
+        </li>
+      </ol>
+
+      <div class="state-box">
+        <h3>📦 지금의 state <small>보라색 줄 = 방금 바뀐 값</small></h3>
+        <pre id="state-view"></pre>
+      </div>
+    </section>
+  </main>
+
+  <section class="guide">
+    <div class="panel">
+      <h2>📝 직접 해 보기</h2>
+      <ol class="steps">
+        <li>할 일을 하나 <b>추가</b>해 보세요. ①②③이 순서대로 켜지고, 새 줄이 초록색으로 깜빡입니다.</li>
+        <li>할 일을 <b>클릭해서 완료 체크</b>해 보세요. state의 <code>done</code>이 먼저 바뀌고(보라색), 그다음 화면이 바뀝니다(초록색).</li>
+        <li>🧪 <b>스위치를 끄고</b> 체크나 삭제를 해 보세요. ③이 주황색으로 건너뛰어지고, 배지가 “화면이 아직 옛날 state”로 바뀝니다.</li>
+        <li><b>render() 직접 호출하기</b>를 누르면 밀려 있던 변화가 한 번에 화면에 반영됩니다.</li>
+        <li><code>app.js</code>를 열어 ① ② ③ 주석을 따라 읽어 보세요. 개발자 도구 콘솔에 <code>state</code>를 입력하면 현재 값을 볼 수 있어요.</li>
+      </ol>
+
+      <h3>React로 옮기면?</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>이 예제 (바닐라 JS)</th><th>React</th></tr></thead>
+          <tbody>
+            <tr><td><code>let state = {...}</code></td><td><code>const [todos, setTodos] = useState([...])</code></td></tr>
+            <tr><td><code>setState(prev =&gt; 새 state)</code></td><td><code>setTodos(prev =&gt; 새 배열)</code></td></tr>
+            <tr><td><code>render()</code>: state를 보고 DOM을 새로 만듦</td><td>컴포넌트 함수: state를 보고 JSX를 반환</td></tr>
+            <tr><td>setState 안에서 직접 <code>render()</code> 호출</td><td>setter를 부르면 React가 알아서 다시 렌더링</td></tr>
+            <tr><td>목록 전체를 지우고 새로 그림</td><td>Virtual DOM으로 달라진 부분만 찾아서 바꿈</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 시각화 코드를 먼저, 앱 코드를 나중에 불러옵니다 -->
+  <script src="flow-visualizer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
